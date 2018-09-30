@@ -79,12 +79,19 @@ contract('ProxyOwnedByDAO', (accounts) => {
       let store = await DaoStorage.new([t.address]);
       let daoBase = await DaoBase.new(store.address);
       proxyDao = await ProxyOwnedByDAO.new(daoBase.address, proxy.address);
+      await t.transferOwnership(daoBase.address);
+      await store.transferOwnership(daoBase.address);
 
       // set permissions
-      const transferDelegationPerm = await proxyDao.TRANSFER_DELEGATION();
-      // --->> this fails
-      await daoBase.allowActionByAnyMemberOfGroup(transferDelegationPerm, "Employees");
       await daoBase.addGroupMember("Employees", accounts[0]);
+
+      const transferDelegationPerm = await proxyDao.TRANSFER_DELEGATION();
+      const transferOwnershipPerm = await proxyDao.TRANSFER_OWNERSHIP();
+      // NOTE: we can use votings here instead!
+      await daoBase.allowActionByAnyMemberOfGroup(transferDelegationPerm, "Employees");
+      await daoBase.allowActionByAnyMemberOfGroup(transferOwnershipPerm, "Employees");
+
+      // finish initialization of DAOBase
       await daoBase.renounceOwnership();
 
       // initialize token contract

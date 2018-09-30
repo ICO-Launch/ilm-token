@@ -17,7 +17,7 @@ contract ProxyOwnedByDAO is DaoClient {
     proxy = _proxy; 
   }
 
-// These methods now requires special custom permissions:
+// These methods now require special custom permissions:
   function DAO_transferDelegation(address _newDelegation) public isCanDo(TRANSFER_DELEGATION) {
     proxy.transferDelegation(_newDelegation); 
   }
