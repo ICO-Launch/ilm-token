@@ -22,25 +22,6 @@ contract('ProxyOwnedByDAO', (accounts) => {
     token = Controller.at(proxy.address);
   });
 
-  /*
-  it('should be initializable through proxy', async () => {
-    // initialize contract
-    await token.initialize(controller.address, 400000000);
-    // check total supply
-    let totalSupply = await token.totalSupply();
-    assert.equal(totalSupply.toNumber(), 0);
-    // check cap
-    let cap = await token.cap();
-    assert.equal(cap.toNumber(), 400000000);
-    // check wiring to proxy
-    let del = await proxy.delegation();
-    assert.equal(del, controller.address);
-    // check wiring to proxy
-    let addr = await token.thisAddr();
-    assert.equal(addr, controller.address);
-  });
-  */
-
   describe('proxy + proxyDAO with no permissions', async() => {
     beforeEach(async () => {
       // Create new proxyDao
@@ -48,6 +29,11 @@ contract('ProxyOwnedByDAO', (accounts) => {
       let store = await DaoStorage.new([t.address]);
       let daoBase = await DaoBase.new(store.address);
       proxyDao = await ProxyOwnedByDAO.new(daoBase.address, proxy.address);
+      await t.transferOwnership(daoBase.address);
+      await store.transferOwnership(daoBase.address);
+
+      // finish initialization of DAOBase
+      await daoBase.renounceOwnership();
 
       // initialize token contract
       await token.initialize(controller.address, 400000000);
