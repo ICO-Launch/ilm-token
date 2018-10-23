@@ -9,7 +9,7 @@ module.exports = {
         host: "localhost",
 	        port: 8545,
 	        gasPrice: 10000000000,
-	        gas: 5000000,
+	        gas: 9000000,
 	        network_id: "*" // Match any network id
 	    },
 		kovan: {
